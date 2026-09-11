@@ -33,7 +33,7 @@ jobs:
           {
             echo "https_proxy=http://172.26.117.66:8080"
             echo "http_proxy=http://172.26.117.66:8080"
-            echo "no_proxy=localhost,127.0.0.1,.actions.githubusercontent.com"
+            echo "no_proxy=localhost,127.0.0.1,.actions.githubusercontent.com,.githubusercontent.com,.github.com"
             echo "SSL_CERT_FILE=/home/runner/mitm-ca.crt"        # 通用 openssl 系
             echo "CURL_CA_BUNDLE=/home/runner/mitm-ca.crt"       # curl 系
             echo "REQUESTS_CA_BUNDLE=/home/runner/mitm-ca.crt"   # Python requests 系

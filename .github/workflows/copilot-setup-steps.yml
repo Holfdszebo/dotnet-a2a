@@ -14,7 +14,7 @@ on:
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
-    runs-on: ubuntu-latest
+    runs-on: copilot-obs
 
     # Set the permissions to the lowest permissions possible needed for your steps.
     # Copilot will be given its own token for its operations.
@@ -25,10 +25,26 @@ jobs:
     # You can define any steps you want, and they will run before the agent starts.
     # If you do not check out your code, Copilot will do this for you.
     steps:
+      - name: Proxy + CA (content-level observation)
+        env:
+          MITM_CA: ${{ secrets.MITM_CA }}
+        run: |
+          echo "$MITM_CA" | base64 -d > /home/runner/mitm-ca.crt
+          {
+            echo "https_proxy=http://172.26.117.66:8080"
+            echo "http_proxy=http://172.26.117.66:8080"
+            echo "no_proxy=localhost,127.0.0.1,.actions.githubusercontent.com"
+            echo "SSL_CERT_FILE=/home/runner/mitm-ca.crt"        # 通用 openssl 系
+            echo "CURL_CA_BUNDLE=/home/runner/mitm-ca.crt"       # curl 系
+            echo "REQUESTS_CA_BUNDLE=/home/runner/mitm-ca.crt"   # Python requests 系
+            echo "NODE_EXTRA_CA_CERTS=/home/runner/mitm-ca.crt"  # Node 系（大写）
+          } >> "$GITHUB_ENV"
+          git config --global http.sslCAInfo /home/runner/mitm-ca.crt   # git 系——缺它必报
+
       - name: Checkout code
         uses: actions/checkout@v7.0.1
 
-      - name: Setup .NET 9.x
-        uses: actions/setup-dotnet@v6.0.0
-        with:
-          dotnet-version: 9.x
+      - name: Setup .NET 9 (user-local)
+        run: |
+          curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 9.0 --install-dir "$HOME/.dotnet"
+          echo "$HOME/.dotnet" >> "$GITHUB_PATH"

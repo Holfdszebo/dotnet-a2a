@@ -1,7 +1,5 @@
 name: "Copilot Setup Steps"
 
-# Automatically run the setup steps when they are changed to allow for easy validation, and
-# allow manual testing through the repository's "Actions" tab
 on:
   workflow_dispatch:
   push:
@@ -12,18 +10,11 @@ on:
       - .github/workflows/copilot-setup-steps.yml
 
 jobs:
-  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
     runs-on: copilot-obs
-
-    # Set the permissions to the lowest permissions possible needed for your steps.
-    # Copilot will be given its own token for its operations.
     permissions:
-      # If you want to clone the repository as part of your setup steps, for example to install dependencies, you'll need the `contents: read` permission. If you don't clone the repository in your setup steps, Copilot will do this for you automatically after the steps complete.
       contents: read
 
-    # You can define any steps you want, and they will run before the agent starts.
-    # If you do not check out your code, Copilot will do this for you.
     steps:
       - name: Proxy + CA (content-level observation)
         env:
@@ -34,12 +25,30 @@ jobs:
             echo "https_proxy=http://172.26.117.66:8080"
             echo "http_proxy=http://172.26.117.66:8080"
             echo "no_proxy=localhost,127.0.0.1,.actions.githubusercontent.com,.githubusercontent.com,.github.com"
-            echo "SSL_CERT_FILE=/home/runner/mitm-ca.crt"        # 通用 openssl 系
-            echo "CURL_CA_BUNDLE=/home/runner/mitm-ca.crt"       # curl 系
-            echo "REQUESTS_CA_BUNDLE=/home/runner/mitm-ca.crt"   # Python requests 系
-            echo "NODE_EXTRA_CA_CERTS=/home/runner/mitm-ca.crt"  # Node 系（大写）
+            echo "SSL_CERT_FILE=/home/runner/mitm-ca.crt"
+            echo "CURL_CA_BUNDLE=/home/runner/mitm-ca.crt"
+            echo "REQUESTS_CA_BUNDLE=/home/runner/mitm-ca.crt"
+            echo "NODE_EXTRA_CA_CERTS=/home/runner/mitm-ca.crt"
           } >> "$GITHUB_ENV"
-          git config --global http.sslCAInfo /home/runner/mitm-ca.crt   # git 系——缺它必报
+          git config --global http.sslCAInfo /home/runner/mitm-ca.crt
+
+      - name: Install aria2 + accelerated curl wrapper
+        run: |
+          sudo apt install -y aria2
+          mkdir -p /home/runner/.local/bin
+          echo '#!/bin/bash' > /home/runner/.local/bin/curl
+          echo 'if echo "$@" | grep -q "https://"; then' >> /home/runner/.local/bin/curl
+          echo '  URL=$(echo "$@" | grep -o "https://[^ ]*")' >> /home/runner/.local/bin/curl
+          echo '  TMPFILE=$(mktemp)' >> /home/runner/.local/bin/curl
+          echo '  unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY' >> /home/runner/.local/bin/curl
+          echo '  aria2c -x 16 -s 16 --file-allocation=none -o "$TMPFILE" "$URL" 2>/dev/null' >> /home/runner/.local/bin/curl
+          echo '  cat "$TMPFILE"' >> /home/runner/.local/bin/curl
+          echo '  rm -f "$TMPFILE"' >> /home/runner/.local/bin/curl
+          echo 'else' >> /home/runner/.local/bin/curl
+          echo '  /usr/bin/curl "$@"' >> /home/runner/.local/bin/curl
+          echo 'fi' >> /home/runner/.local/bin/curl
+          chmod +x /home/runner/.local/bin/curl
+          echo "/home/runner/.local/bin" >> "$GITHUB_PATH"
 
       - name: Checkout code
         uses: actions/checkout@v7.0.1

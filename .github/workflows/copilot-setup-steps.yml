@@ -14,7 +14,6 @@ jobs:
     runs-on: copilot-obs
     permissions:
       contents: read
-
     steps:
       - name: Proxy + CA (content-level observation)
         env:
@@ -22,33 +21,15 @@ jobs:
         run: |
           echo "$MITM_CA" | base64 -d > /home/runner/mitm-ca.crt
           {
-            echo "https_proxy=http://172.26.117.66:8080"
-            echo "http_proxy=http://172.26.117.66:8080"
-            echo "no_proxy=localhost,127.0.0.1,.actions.githubusercontent.com,.githubusercontent.com,.github.com"
+            echo "https_proxy=http://172.31.197.37:8080"
+            echo "http_proxy=http://172.31.197.37:8080"
+            echo "no_proxy=localhost,127.0.0.1,.actions.githubusercontent.com"
             echo "SSL_CERT_FILE=/home/runner/mitm-ca.crt"
             echo "CURL_CA_BUNDLE=/home/runner/mitm-ca.crt"
             echo "REQUESTS_CA_BUNDLE=/home/runner/mitm-ca.crt"
             echo "NODE_EXTRA_CA_CERTS=/home/runner/mitm-ca.crt"
           } >> "$GITHUB_ENV"
           git config --global http.sslCAInfo /home/runner/mitm-ca.crt
-
-      - name: Install aria2 + accelerated curl wrapper
-        run: |
-          sudo apt install -y aria2
-          mkdir -p /home/runner/.local/bin
-          echo '#!/bin/bash' > /home/runner/.local/bin/curl
-          echo 'if echo "$@" | grep -q "https://"; then' >> /home/runner/.local/bin/curl
-          echo '  URL=$(echo "$@" | grep -o "https://[^ ]*")' >> /home/runner/.local/bin/curl
-          echo '  TMPFILE=$(mktemp)' >> /home/runner/.local/bin/curl
-          echo '  unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY' >> /home/runner/.local/bin/curl
-          echo '  aria2c -x 16 -s 16 --file-allocation=none -o "$TMPFILE" "$URL" 2>/dev/null' >> /home/runner/.local/bin/curl
-          echo '  cat "$TMPFILE"' >> /home/runner/.local/bin/curl
-          echo '  rm -f "$TMPFILE"' >> /home/runner/.local/bin/curl
-          echo 'else' >> /home/runner/.local/bin/curl
-          echo '  /usr/bin/curl "$@"' >> /home/runner/.local/bin/curl
-          echo 'fi' >> /home/runner/.local/bin/curl
-          chmod +x /home/runner/.local/bin/curl
-          echo "/home/runner/.local/bin" >> "$GITHUB_PATH"
 
       - name: Checkout code
         uses: actions/checkout@v7.0.1

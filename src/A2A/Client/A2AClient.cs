@@ -27,14 +27,20 @@ public sealed class A2AClient : IA2AClient, IDisposable
         _httpClient = httpClient ?? s_sharedClient;
     }
 
-    /// <inheritdoc />
+    /// <summary>Sends a message to the agent.</summary>
+    /// <param name="request">The send message request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The send message response.</returns>
     public async Task<SendMessageResponse> SendMessageAsync(SendMessageRequest request, CancellationToken cancellationToken = default)
     {
         var rpcResponse = await SendJsonRpcRequestAsync<SendMessageResponse>(A2AMethods.SendMessage, request, cancellationToken).ConfigureAwait(false);
         return rpcResponse;
     }
 
-    /// <inheritdoc />
+    /// <summary>Sends a streaming message to the agent.</summary>
+    /// <param name="request">The send message request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>An asynchronous stream of response events.</returns>
     public async IAsyncEnumerable<StreamResponse> SendStreamingMessageAsync(SendMessageRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await foreach (var item in SendStreamingJsonRpcRequestAsync<StreamResponse>(A2AMethods.SendStreamingMessage, request, cancellationToken).ConfigureAwait(false))
@@ -43,25 +49,37 @@ public sealed class A2AClient : IA2AClient, IDisposable
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>Gets a task by identifier.</summary>
+    /// <param name="request">The get task request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The matching task.</returns>
     public async Task<AgentTask> GetTaskAsync(GetTaskRequest request, CancellationToken cancellationToken = default)
     {
         return await SendJsonRpcRequestAsync<AgentTask>(A2AMethods.GetTask, request, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Lists tasks.</summary>
+    /// <param name="request">The list tasks request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A page of tasks.</returns>
     public async Task<ListTasksResponse> ListTasksAsync(ListTasksRequest request, CancellationToken cancellationToken = default)
     {
         return await SendJsonRpcRequestAsync<ListTasksResponse>(A2AMethods.ListTasks, request, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Cancels a task.</summary>
+    /// <param name="request">The cancel task request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The updated task.</returns>
     public async Task<AgentTask> CancelTaskAsync(CancelTaskRequest request, CancellationToken cancellationToken = default)
     {
         return await SendJsonRpcRequestAsync<AgentTask>(A2AMethods.CancelTask, request, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Subscribes to streaming updates for a task.</summary>
+    /// <param name="request">The subscription request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>An asynchronous stream of task update events.</returns>
     public async IAsyncEnumerable<StreamResponse> SubscribeToTaskAsync(SubscribeToTaskRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await foreach (var item in SendStreamingJsonRpcRequestAsync<StreamResponse>(A2AMethods.SubscribeToTask, request, cancellationToken).ConfigureAwait(false))
@@ -70,38 +88,53 @@ public sealed class A2AClient : IA2AClient, IDisposable
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>Creates a task push notification configuration.</summary>
+    /// <param name="request">The configuration creation request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The created push notification configuration.</returns>
     public async Task<TaskPushNotificationConfig> CreateTaskPushNotificationConfigAsync(CreateTaskPushNotificationConfigRequest request, CancellationToken cancellationToken = default)
     {
         return await SendJsonRpcRequestAsync<TaskPushNotificationConfig>(A2AMethods.CreateTaskPushNotificationConfig, request, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Gets a task push notification configuration.</summary>
+    /// <param name="request">The get configuration request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The requested push notification configuration.</returns>
     public async Task<TaskPushNotificationConfig> GetTaskPushNotificationConfigAsync(GetTaskPushNotificationConfigRequest request, CancellationToken cancellationToken = default)
     {
         return await SendJsonRpcRequestAsync<TaskPushNotificationConfig>(A2AMethods.GetTaskPushNotificationConfig, request, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Lists task push notification configurations.</summary>
+    /// <param name="request">The list configurations request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A page of push notification configurations.</returns>
     public async Task<ListTaskPushNotificationConfigResponse> ListTaskPushNotificationConfigAsync(ListTaskPushNotificationConfigRequest request, CancellationToken cancellationToken = default)
     {
         return await SendJsonRpcRequestAsync<ListTaskPushNotificationConfigResponse>(A2AMethods.ListTaskPushNotificationConfig, request, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Deletes a task push notification configuration.</summary>
+    /// <param name="request">The delete configuration request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task DeleteTaskPushNotificationConfigAsync(DeleteTaskPushNotificationConfigRequest request, CancellationToken cancellationToken = default)
     {
         await SendJsonRpcRequestAsync(A2AMethods.DeleteTaskPushNotificationConfig, request, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Gets the extended agent card.</summary>
+    /// <param name="request">The get extended agent card request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The extended agent card.</returns>
     public async Task<AgentCard> GetExtendedAgentCardAsync(GetExtendedAgentCardRequest request, CancellationToken cancellationToken = default)
     {
         return await SendJsonRpcRequestAsync<AgentCard>(A2AMethods.GetExtendedAgentCard, request, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
-    /// <summary>No-op. The HttpClient is either shared or externally owned.</summary>
+    /// <summary>Releases resources used by the client.</summary>
+    /// <remarks>No-op. The <see cref="HttpClient"/> is either shared or externally owned.</remarks>
     public void Dispose()
     {
         // HttpClient lifetime is managed externally or via the shared static instance.

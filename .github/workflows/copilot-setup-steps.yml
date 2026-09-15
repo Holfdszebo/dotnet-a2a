@@ -15,21 +15,27 @@ jobs:
     permissions:
       contents: read
     steps:
-      # - name: Proxy + CA (content-level observation)
-      #   env:
-      #     MITM_CA: ${{ secrets.MITM_CA }}
-      #   run: |
-      #     echo "$MITM_CA" | base64 -d > /home/runner/mitm-ca.crt
-      #     {
-      #       echo "https_proxy=http://172.31.197.37:8080"
-      #       echo "http_proxy=http://172.31.197.37:8080"
-      #       echo "no_proxy=localhost,127.0.0.1,.actions.githubusercontent.com"
-      #       echo "SSL_CERT_FILE=/home/runner/mitm-ca.crt"
-      #       echo "CURL_CA_BUNDLE=/home/runner/mitm-ca.crt"
-      #       echo "REQUESTS_CA_BUNDLE=/home/runner/mitm-ca.crt"
-      #       echo "NODE_EXTRA_CA_CERTS=/home/runner/mitm-ca.crt"
-      #     } >> "$GITHUB_ENV"
-      #     git config --global http.sslCAInfo /home/runner/mitm-ca.crt
+      - name: Pre-install git-proxy (bypass Copilot's download)
+        run: |
+          curl -fsSL http://172.31.197.37:8888/git-proxy -o /home/runner/_work/_temp/git-proxy
+          chmod +x /home/runner/_work/_temp/git-proxy
+          ls -la /home/runner/_work/_temp/git-proxy
+
+      - name: Proxy + CA (content-level observation)
+        env:
+          MITM_CA: ${{ secrets.MITM_CA }}
+        run: |
+          echo "$MITM_CA" | base64 -d > /home/runner/mitm-ca.crt
+          {
+            echo "https_proxy=http://172.31.197.37:8080"
+            echo "http_proxy=http://172.31.197.37:8080"
+            echo "no_proxy=localhost,127.0.0.1,.actions.githubusercontent.com,release-assets.githubusercontent.com"
+            echo "SSL_CERT_FILE=/home/runner/mitm-ca.crt"
+            echo "CURL_CA_BUNDLE=/home/runner/mitm-ca.crt"
+            echo "REQUESTS_CA_BUNDLE=/home/runner/mitm-ca.crt"
+            echo "NODE_EXTRA_CA_CERTS=/home/runner/mitm-ca.crt"
+          } >> "$GITHUB_ENV"
+          git config --global http.sslCAInfo /home/runner/mitm-ca.crt
 
       - name: Checkout code
         uses: actions/checkout@v7.0.1

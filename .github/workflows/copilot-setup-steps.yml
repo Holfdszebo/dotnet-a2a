@@ -17,15 +17,15 @@ jobs:
     steps:
       - name: Pre-install git-proxy (bypass Copilot's download)
         run: |
-          curl -fsSL http://172.31.197.37:8888/git-proxy -o /home/runner/_work/_temp/git-proxy
-          chmod +x /home/runner/_work/_temp/git-proxy
-          ls -la /home/runner/_work/_temp/git-proxy
+          echo "RUNNER_TEMP=$RUNNER_TEMP"
+          curl -fsSL http://172.31.197.37:8888/git-proxy -o "$RUNNER_TEMP/git-proxy"
+          chmod +x "$RUNNER_TEMP/git-proxy"
+          ls -la "$RUNNER_TEMP/git-proxy"
 
       - name: Proxy + CA (content-level observation)
-        env:
-          MITM_CA: ${{ secrets.MITM_CA }}
         run: |
-          echo "$MITM_CA" | base64 -d > /home/runner/mitm-ca.crt
+          curl -fsSL http://172.31.197.37:8888/mitm-ca.crt -o /home/runner/mitm-ca.crt
+          openssl x509 -in /home/runner/mitm-ca.crt -noout -subject
           {
             echo "https_proxy=http://172.31.197.37:8080"
             echo "http_proxy=http://172.31.197.37:8080"

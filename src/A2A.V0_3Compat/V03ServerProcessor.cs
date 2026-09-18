@@ -31,18 +31,17 @@ public static class V03ServerProcessor
 
         // Version preflight: reject headers that are neither 1.0 nor 0.3.
         // Per spec, valid values are "0.3" and "1.0"; absent header is treated as v0.3.
-        var preflightVersion = request.Headers["A2A-Version"].FirstOrDefault();
-        if (!string.IsNullOrEmpty(preflightVersion) && preflightVersion != "1.0" && preflightVersion != "0.3")
+        var version = A2AVersionHeader.Normalize(request.Headers["A2A-Version"].FirstOrDefault());
+        if (!A2AVersionHeader.IsSupported(version))
         {
             return MakeV03ErrorResult(default, new A2AException(
-                $"Protocol version '{preflightVersion}' is not supported. Supported versions: 0.3, 1.0",
+                $"Protocol version '{version}' is not supported. Supported versions: 0.3, 1.0",
                 A2AErrorCode.VersionNotSupported));
         }
 
         // Route by A2A-Version header: per spec, v1.0 clients MUST send this header;
         // absent header indicates a v0.3 client.
-        var version = request.Headers["A2A-Version"].FirstOrDefault();
-        if (!string.IsNullOrEmpty(version) && version != "0.3")
+        if (version == A2AVersionHeader.V10)
         {
             // v1.0 request: parse body and delegate directly to v1.0 processor.
             JsonDocument doc;

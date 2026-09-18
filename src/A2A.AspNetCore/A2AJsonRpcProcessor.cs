@@ -13,8 +13,8 @@ public static class A2AJsonRpcProcessor
     internal static IResult? CheckPreflight(HttpRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
-        var version = request.Headers["A2A-Version"].FirstOrDefault();
-        if (!string.IsNullOrEmpty(version) && version != "1.0" && version != "0.3")
+        var version = NormalizeVersionHeader(request.Headers["A2A-Version"].FirstOrDefault());
+        if (version is not null && version != "1.0" && version != "0.3")
         {
             return new JsonRpcResponseResult(JsonRpcResponse.CreateJsonRpcErrorResponse(
                 new JsonRpcId((string?)null),
@@ -24,6 +24,9 @@ public static class A2AJsonRpcProcessor
         }
         return null;
     }
+
+    private static string? NormalizeVersionHeader(string? version) =>
+        string.IsNullOrWhiteSpace(version) ? null : version.Trim();
 
     internal static async Task<IResult> ProcessRequestAsync(IA2ARequestHandler requestHandler, HttpRequest request, CancellationToken cancellationToken)
     {

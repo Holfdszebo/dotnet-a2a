@@ -93,10 +93,10 @@ public static class V03ServerCompatEndpointExtensions
         routeGroup.MapGet(string.Empty, async (HttpRequest request) =>
         {
             var v1Card = await getAgentCardAsync();
-            var version = request.Headers["A2A-Version"].FirstOrDefault();
-            if (version == "1.0")
+            var version = A2AVersionHeader.Normalize(request.Headers["A2A-Version"].FirstOrDefault());
+            if (version == A2AVersionHeader.V10)
                 return Results.Ok(v1Card);
-            if (version == "0.3")
+            if (version == A2AVersionHeader.V03)
                 return Results.Ok(V03TypeConverter.ToV03AgentCard(v1Card));
             return blendedCard
                 ? Results.Json(V03TypeConverter.ToBlendedAgentCard(v1Card))
@@ -110,10 +110,10 @@ public static class V03ServerCompatEndpointExtensions
         routeGroup.MapGet(".well-known/agent-card.json", async (HttpRequest request, CancellationToken ct) =>
         {
             var v1Card = await getAgentCardAsync();
-            var version = request.Headers["A2A-Version"].FirstOrDefault();
-            if (version == "1.0")
+            var version = A2AVersionHeader.Normalize(request.Headers["A2A-Version"].FirstOrDefault());
+            if (version == A2AVersionHeader.V10)
                 return Results.Ok(v1Card);
-            if (version == "0.3")
+            if (version == A2AVersionHeader.V03)
                 return Results.Ok(V03TypeConverter.ToV03AgentCard(v1Card));
             return blendedCard
                 ? Results.Json(V03TypeConverter.ToBlendedAgentCard(v1Card))

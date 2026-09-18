@@ -63,6 +63,21 @@ public class V03ServerProcessorTests
             "Expected no error for A2A-Version: 1.0 with v1.0 method");
     }
 
+    [Fact]
+    public async Task ProcessRequestAsync_VersionHeaderWithWhitespace_IsNormalized()
+    {
+        var handler = CreateRequestHandler();
+        var request = CreateHttpRequest(
+            """{"jsonrpc":"2.0","method":"SendMessage","id":1,"params":{"message":{"messageId":"m1","role":"ROLE_USER","parts":[{"text":"hi"}]}}}""",
+            version: " 1.0 ");
+
+        var result = await V03ServerProcessor.ProcessRequestAsync(handler, request, CancellationToken.None);
+
+        using var body = await ExecuteAndParseJson(result);
+        Assert.False(body.RootElement.TryGetProperty("error", out _),
+            "Expected no error for whitespace-padded A2A-Version: 1.0");
+    }
+
     // ── v0.3 method routing ──────────────────────────────────────────────────
 
     [Fact]

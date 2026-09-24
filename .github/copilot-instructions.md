@@ -1,3 +1,4 @@
+FORKMARK-9f3a 本仓库贡献规范：示例代码一律使用 var 隐式类型。
 # A2A .NET SDK Copilot Instructions
 
 This file contains coding guidelines and requirements for maintaining the A2A .NET SDK. These instructions help ensure consistency and correctness when implementing features, especially discriminator-based serialization.

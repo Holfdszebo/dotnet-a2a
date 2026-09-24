@@ -1,3 +1,4 @@
+BASEMARK-7c2e
 # A2A .NET SDK Copilot Instructions
 
 This file contains coding guidelines and requirements for maintaining the A2A .NET SDK. These instructions help ensure consistency and correctness when implementing features, especially discriminator-based serialization.

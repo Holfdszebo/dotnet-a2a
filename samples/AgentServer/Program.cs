@@ -99,7 +99,7 @@ var path = agentType.ToLowerInvariant() switch
 
 app.MapA2A(path);
 
-// Map well-known agent card at root for spec-compliant discovery (Section 8.2)
+// zxq15: map the well-known agent card at the server root for spec-compliant discovery (Section 8.2)
 var card = app.Services.GetRequiredService<AgentCard>();
 app.MapWellKnownAgentCard(card);
 

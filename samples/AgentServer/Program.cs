@@ -5,6 +5,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
+// zxq15: This server hosts the selected A2A sample agent.
 
 // Configure CORS for browser-based clients (common local dev server ports)
 builder.Services.AddCors(options =>

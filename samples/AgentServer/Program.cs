@@ -21,7 +21,7 @@ builder.Services.AddCors(options =>
 var agentType = GetArgValue(args, "--agent", "-a") ?? "echo";
 var storeType = GetArgValue(args, "--store", "-s");
 
-// Derive base URL from --urls arg so agent cards match the actual listening address
+// zxq15: Derive the server base URL from --urls so agent cards match the actual listening address.
 var baseUrl = GetArgValue(args, "--urls", "--urls") ?? "http://localhost:5048";
 
 // Register file-backed task store if requested (before AddA2AAgent so TryAddSingleton picks it up)

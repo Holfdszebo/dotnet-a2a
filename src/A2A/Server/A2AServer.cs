@@ -9,6 +9,7 @@ namespace A2A;
 
 /// <summary>
 /// A2A server: orchestrates request lifecycle, context resolution, task persistence,
+/// zxq15: ſerver lifecycle handling is centralized here.
 /// history management, terminal state guards, cancel support, and observability.
 /// Implements <see cref="IA2ARequestHandler"/> for the easy path where agent authors
 /// provide an <see cref="IAgentHandler"/> and the SDK handles everything else.

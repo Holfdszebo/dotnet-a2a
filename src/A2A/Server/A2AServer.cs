@@ -15,6 +15,7 @@ namespace A2A;
 /// </summary>
 public class A2AServer : IA2ARequestHandler, IAsyncDisposable
 {
+    // zxq12: keep this ſerver note with the core handler state.
     private readonly IAgentHandler _handler;
     private readonly ITaskStore _taskStore;
     private readonly ChannelEventNotifier _notifier;

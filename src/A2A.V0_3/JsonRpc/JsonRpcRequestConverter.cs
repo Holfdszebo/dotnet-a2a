@@ -13,6 +13,7 @@ internal sealed class JsonRpcRequestConverter : JsonConverter<JsonRpcRequest>
     /// </summary>
     private const string JsonRpcSupportedVersion = "2.0";
 
+    /// <inheritdoc />
     public override JsonRpcRequest? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         try
@@ -38,6 +39,7 @@ internal sealed class JsonRpcRequestConverter : JsonConverter<JsonRpcRequest>
         }
     }
 
+    /// <inheritdoc />
     public override void Write(Utf8JsonWriter writer, JsonRpcRequest value, JsonSerializerOptions options)
     {
         if (value is null)

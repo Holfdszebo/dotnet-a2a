@@ -128,6 +128,7 @@ public readonly struct JsonRpcId : IEquatable<JsonRpcId>
     /// </summary>
     internal sealed class Converter : JsonConverter<JsonRpcId>
     {
+        /// <inheritdoc />
         public override JsonRpcId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             switch (reader.TokenType)
@@ -147,6 +148,7 @@ public readonly struct JsonRpcId : IEquatable<JsonRpcId>
             }
         }
 
+        /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer, JsonRpcId value, JsonSerializerOptions options)
         {
             if (!value.HasValue)

@@ -106,6 +106,7 @@ public sealed class ChannelEventNotifier
     private sealed class TaskLockRelease(SemaphoreSlim semaphore) : IDisposable
     {
         private int _disposed;
+        /// <inheritdoc />
         public void Dispose()
         {
             if (Interlocked.Exchange(ref _disposed, 1) == 0)

@@ -260,6 +260,7 @@ internal sealed class A2AResponseResult : IResult
     internal A2AResponseResult(TaskPushNotificationConfig config) { _response = config; _responseType = typeof(TaskPushNotificationConfig); }
     internal A2AResponseResult(ListTaskPushNotificationConfigResponse response) { _response = response; _responseType = typeof(ListTaskPushNotificationConfigResponse); }
 
+    /// <inheritdoc />
     public async Task ExecuteAsync(HttpContext httpContext)
     {
         httpContext.Response.ContentType = "application/json";
@@ -275,6 +276,7 @@ internal sealed class A2AEventStreamResult : IResult
 
     internal A2AEventStreamResult(IAsyncEnumerable<StreamResponse> events) => _events = events;
 
+    /// <inheritdoc />
     public async Task ExecuteAsync(HttpContext httpContext)
     {
         httpContext.Response.ContentType = "text/event-stream";

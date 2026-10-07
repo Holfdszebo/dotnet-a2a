@@ -12,6 +12,7 @@ internal sealed class A2AErrorResult(A2AException exception) : IResult, IStatusC
 {
     public int? StatusCode => A2AErrorCodeMapping.GetHttpStatusCode(exception.ErrorCode);
 
+    /// <inheritdoc />
     public async Task ExecuteAsync(HttpContext httpContext)
     {
         var errorCode = exception.ErrorCode;

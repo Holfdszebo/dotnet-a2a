@@ -786,6 +786,42 @@ public class A2AJsonRpcProcessorTests
     }
 
     [Fact]
+    public async Task ProcessRequestAsync_VersionNegotiation_V10WithWhitespace_Succeeds()
+    {
+        var requestHandler = CreateTestServer();
+        var jsonRequest = $$"""
+        {
+            "jsonrpc": "2.0",
+            "method": "{{A2AMethods.SendMessage}}",
+            "id": "ver-2b",
+            "params": {
+                "message": {
+                    "messageId": "test-msg",
+                    "role": "ROLE_USER",
+                    "parts": [{"text":"hello"}]
+                }
+            }
+        }
+        """;
+
+        var context = new DefaultHttpContext();
+        var bytes = Encoding.UTF8.GetBytes(jsonRequest);
+        context.Request.Body = new MemoryStream(bytes);
+        context.Request.ContentType = "application/json";
+        context.Request.Headers["A2A-Version"] = " 1.0 ";
+        var httpRequest = context.Request;
+
+        var result = await A2AJsonRpcProcessor.ProcessRequestAsync(requestHandler, httpRequest, CancellationToken.None);
+
+        var responseResult = Assert.IsType<JsonRpcResponseResult>(result);
+        var (StatusCode, _, BodyContent) = await GetJsonRpcResponseHttpDetails<JsonRpcResponse>(responseResult);
+
+        Assert.Equal(StatusCodes.Status200OK, StatusCode);
+        Assert.NotNull(BodyContent.Result);
+        Assert.Null(BodyContent.Error);
+    }
+
+    [Fact]
     public async Task ProcessRequestAsync_VersionNegotiation_V03_Succeeds()
     {
         // Arrange

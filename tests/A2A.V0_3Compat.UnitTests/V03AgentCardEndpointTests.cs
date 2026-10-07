@@ -127,4 +127,17 @@ public class V03AgentCardEndpointTests
         Assert.True(json.ContainsKey("supportedInterfaces"));
         Assert.False(json.ContainsKey("url"));
     }
+
+    [Fact]
+    public async Task WellKnownRoute_V10HeaderWithWhitespace_ReturnsV10Card()
+    {
+        using var client = await CreateClientAsync(blendedCard: true);
+        var request = new HttpRequestMessage(HttpMethod.Get, "/agent/.well-known/agent-card.json");
+        request.Headers.Add("A2A-Version", " 1.0 ");
+        var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+        var json = JsonNode.Parse(await response.Content.ReadAsStringAsync())!.AsObject();
+        Assert.True(json.ContainsKey("supportedInterfaces"));
+        Assert.False(json.ContainsKey("url"));
+    }
 }

@@ -29,14 +29,20 @@ public sealed class A2AHttpJsonClient : IA2AClient, IDisposable
         _httpClient = httpClient ?? A2AClient.s_sharedClient;
     }
 
-    /// <inheritdoc />
+    /// <summary>Sends a message to the agent.</summary>
+    /// <param name="request">The send message request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The send message response.</returns>
     public async Task<SendMessageResponse> SendMessageAsync(SendMessageRequest request, CancellationToken cancellationToken = default)
     {
         return await PostJsonAsync<SendMessageRequest, SendMessageResponse>(
             "/message:send", request, "SendMessage", cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Sends a streaming message to the agent.</summary>
+    /// <param name="request">The send message request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>An asynchronous enumerable of streaming responses.</returns>
     public async IAsyncEnumerable<StreamResponse> SendStreamingMessageAsync(SendMessageRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await foreach (var item in PostStreamingAsync(
@@ -46,7 +52,10 @@ public sealed class A2AHttpJsonClient : IA2AClient, IDisposable
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>Gets a task by ID.</summary>
+    /// <param name="request">The get task request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The agent task.</returns>
     public async Task<AgentTask> GetTaskAsync(GetTaskRequest request, CancellationToken cancellationToken = default)
     {
         var query = BuildQueryString(
@@ -57,7 +66,10 @@ public sealed class A2AHttpJsonClient : IA2AClient, IDisposable
             "GetTask", cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Lists tasks with pagination.</summary>
+    /// <param name="request">The list tasks request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The list tasks response.</returns>
     public async Task<ListTasksResponse> ListTasksAsync(ListTasksRequest request, CancellationToken cancellationToken = default)
     {
         var query = BuildQueryString(
@@ -73,7 +85,10 @@ public sealed class A2AHttpJsonClient : IA2AClient, IDisposable
             $"/tasks{query}", "ListTasks", cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Cancels a task.</summary>
+    /// <param name="request">The cancel task request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The canceled agent task.</returns>
     public async Task<AgentTask> CancelTaskAsync(CancelTaskRequest request, CancellationToken cancellationToken = default)
     {
         var path = $"/tasks/{Uri.EscapeDataString(request.Id)}:cancel";
@@ -89,7 +104,10 @@ public sealed class A2AHttpJsonClient : IA2AClient, IDisposable
             path, "CancelTask", cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Subscribes to task updates.</summary>
+    /// <param name="request">The subscribe to task request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>An asynchronous enumerable of streaming responses.</returns>
     public async IAsyncEnumerable<StreamResponse> SubscribeToTaskAsync(SubscribeToTaskRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await foreach (var item in PostEmptyStreamingAsync(
@@ -100,7 +118,10 @@ public sealed class A2AHttpJsonClient : IA2AClient, IDisposable
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>Creates a push notification configuration.</summary>
+    /// <param name="request">The create push notification config request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The created push notification configuration.</returns>
     public async Task<TaskPushNotificationConfig> CreateTaskPushNotificationConfigAsync(
         CreateTaskPushNotificationConfigRequest request, CancellationToken cancellationToken = default)
     {
@@ -109,7 +130,10 @@ public sealed class A2AHttpJsonClient : IA2AClient, IDisposable
             request.Config, "CreateTaskPushNotificationConfig", cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Gets a push notification configuration.</summary>
+    /// <param name="request">The get push notification config request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The push notification configuration.</returns>
     public async Task<TaskPushNotificationConfig> GetTaskPushNotificationConfigAsync(
         GetTaskPushNotificationConfigRequest request, CancellationToken cancellationToken = default)
     {
@@ -118,7 +142,10 @@ public sealed class A2AHttpJsonClient : IA2AClient, IDisposable
             "GetTaskPushNotificationConfig", cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Lists push notification configurations.</summary>
+    /// <param name="request">The list push notification configs request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The list push notification config response.</returns>
     public async Task<ListTaskPushNotificationConfigResponse> ListTaskPushNotificationConfigAsync(
         ListTaskPushNotificationConfigRequest request, CancellationToken cancellationToken = default)
     {
@@ -131,7 +158,10 @@ public sealed class A2AHttpJsonClient : IA2AClient, IDisposable
             "ListTaskPushNotificationConfig", cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Deletes a push notification configuration.</summary>
+    /// <param name="request">The delete push notification config request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task DeleteTaskPushNotificationConfigAsync(
         DeleteTaskPushNotificationConfigRequest request, CancellationToken cancellationToken = default)
     {
@@ -140,14 +170,17 @@ public sealed class A2AHttpJsonClient : IA2AClient, IDisposable
             "DeleteTaskPushNotificationConfig", cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Gets the extended agent card.</summary>
+    /// <param name="request">The get extended agent card request.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The extended agent card.</returns>
     public async Task<AgentCard> GetExtendedAgentCardAsync(GetExtendedAgentCardRequest request, CancellationToken cancellationToken = default)
     {
         return await GetJsonAsync<AgentCard>(
             "/extendedAgentCard", "GetExtendedAgentCard", cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>Releases resources used by the client.</summary>
     /// <remarks>No-op. The <see cref="HttpClient"/> is either shared or externally owned.</remarks>
     public void Dispose()
     {

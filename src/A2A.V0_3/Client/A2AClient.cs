@@ -31,7 +31,12 @@ public sealed class A2AClient : IA2AClient
         _httpClient = httpClient ?? s_sharedClient;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Sends a non-streaming message request to the agent.
+    /// </summary>
+    /// <param name="taskSendParams">The message parameters containing the message and configuration.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>The agent's response containing a task or message.</returns>
     public Task<A2AResponse> SendMessageAsync(MessageSendParams taskSendParams, CancellationToken cancellationToken = default) =>
         SendRpcRequestAsync(
             taskSendParams ?? throw new ArgumentNullException(nameof(taskSendParams)),
@@ -40,7 +45,12 @@ public sealed class A2AClient : IA2AClient
             A2AJsonUtilities.JsonContext.Default.A2AResponse,
             cancellationToken);
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Retrieves the current state and history of a specific task.
+    /// </summary>
+    /// <param name="taskId">The ID of the task to retrieve.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>The requested task with its current state and history.</returns>
     public Task<AgentTask> GetTaskAsync(string taskId, CancellationToken cancellationToken = default) =>
         SendRpcRequestAsync(
             new() { Id = string.IsNullOrEmpty(taskId) ? throw new ArgumentNullException(nameof(taskId)) : taskId },
@@ -49,7 +59,12 @@ public sealed class A2AClient : IA2AClient
             A2AJsonUtilities.JsonContext.Default.AgentTask,
             cancellationToken);
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Requests the agent to cancel a specific task.
+    /// </summary>
+    /// <param name="taskIdParams">Parameters containing the task ID to cancel.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>The updated task with canceled status.</returns>
     public Task<AgentTask> CancelTaskAsync(TaskIdParams taskIdParams, CancellationToken cancellationToken = default) =>
         SendRpcRequestAsync(
             taskIdParams ?? throw new ArgumentNullException(nameof(taskIdParams)),
@@ -58,7 +73,12 @@ public sealed class A2AClient : IA2AClient
             A2AJsonUtilities.JsonContext.Default.AgentTask,
             cancellationToken);
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Sets or updates the push notification configuration for a specific task.
+    /// </summary>
+    /// <param name="pushNotificationConfig">The push notification configuration to set.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>The configured push notification settings with confirmation.</returns>
     public Task<TaskPushNotificationConfig> SetPushNotificationAsync(TaskPushNotificationConfig pushNotificationConfig, CancellationToken cancellationToken = default) =>
         SendRpcRequestAsync(
             pushNotificationConfig ?? throw new ArgumentNullException(nameof(pushNotificationConfig)),
@@ -67,7 +87,12 @@ public sealed class A2AClient : IA2AClient
             A2AJsonUtilities.JsonContext.Default.TaskPushNotificationConfig,
             cancellationToken);
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Retrieves the push notification configuration for a specific task.
+    /// </summary>
+    /// <param name="notificationConfigParams">Parameters containing the task ID and optional push notification config ID.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>The push notification configuration for the specified task.</returns>
     public Task<TaskPushNotificationConfig> GetPushNotificationAsync(GetTaskPushNotificationConfigParams notificationConfigParams, CancellationToken cancellationToken = default) =>
         SendRpcRequestAsync(
             notificationConfigParams ?? throw new ArgumentNullException(nameof(notificationConfigParams)),
@@ -76,7 +101,15 @@ public sealed class A2AClient : IA2AClient
             A2AJsonUtilities.JsonContext.Default.TaskPushNotificationConfig,
             cancellationToken);
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Sends a streaming message request to the agent and yields responses as they arrive.
+    /// </summary>
+    /// <remarks>
+    /// This method uses Server-Sent Events (SSE) to receive a stream of updates from the agent.
+    /// </remarks>
+    /// <param name="taskSendParams">The message parameters containing the message and configuration.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>An async enumerable of server-sent events containing task, message, or task update events.</returns>
     public IAsyncEnumerable<SseItem<A2AEvent>> SendMessageStreamingAsync(MessageSendParams taskSendParams, CancellationToken cancellationToken = default) =>
         SendRpcSseRequestAsync(
             taskSendParams ?? throw new ArgumentNullException(nameof(taskSendParams)),
@@ -85,7 +118,12 @@ public sealed class A2AClient : IA2AClient
             A2AJsonUtilities.JsonContext.Default.A2AEvent,
             cancellationToken);
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Subscribes to a task's event stream to receive ongoing updates.
+    /// </summary>
+    /// <param name="taskId">The ID of the task to subscribe to.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>An async enumerable of server-sent events containing task updates.</returns>
     public IAsyncEnumerable<SseItem<A2AEvent>> SubscribeToTaskAsync(string taskId, CancellationToken cancellationToken = default) =>
         SendRpcSseRequestAsync(
             new() { Id = string.IsNullOrEmpty(taskId) ? throw new ArgumentNullException(nameof(taskId)) : taskId },

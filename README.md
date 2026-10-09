@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![NuGet Version](https://img.shields.io/nuget/v/A2A.svg)](https://www.nuget.org/packages/A2A/)
-
+fork
 A .NET library that helps run agentic applications as A2AServers following the [Agent2Agent (A2A) Protocol](https://a2a-protocol.org).
 
 The A2A .NET SDK provides a robust implementation of the Agent2Agent (A2A) protocol, enabling seamless communication between AI agents and applications. This library offers both high-level abstractions and fine-grained control, making it easy to build A2A-compatible agents while maintaining flexibility for advanced use cases.
@@ -15,7 +15,7 @@ Key features include:
 - **ASP.NET Core Integration**: Built-in extensions for hosting A2A agents in web applications
 - **Cross-platform Compatibility**: Supports .NET 8+
 
-## Protocol Compatibility
+## Protocol Compatibilities
 
 This library implements the [A2A v1.0 specification](https://a2a-protocol.org). It provides full support for the JSON-RPC binding and HTTP+JSON REST binding, including streaming via Server-Sent Events.
 
@@ -71,7 +71,7 @@ This library provides ASP.NET Core integration for hosting A2A agents. It includ
 - **`A2AServiceCollectionExtensions`**: Provides `AddA2AAgent<THandler>()` for registering an agent, its card, and all A2A services with dependency injection.
 - **`A2ARouteBuilderExtensions`**: Provides `MapA2A()` for JSON-RPC endpoints, `MapHttpA2A()` for HTTP REST endpoints, and `MapWellKnownAgentCard()` for agent card discovery.
 
-## Getting Started
+## Getting Start
 
 ### 1. Create an Agent Server
 

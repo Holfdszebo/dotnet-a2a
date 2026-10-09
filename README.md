@@ -33,7 +33,7 @@ dotnet add package A2A.V0_3
 dotnet add package A2A
 ```
 
-### ASP.NET Core Extensions
+### ASP.NET Core Extension
 
 ```bash
 dotnet add package A2A.AspNetCore
